@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# 入力動画・生成物（巨大 / 生成可能なのでGit管理しない）
+videos/
+temp/
+outputs/
+outputs_*/
+
+# 環境変数・シークレット
+.env
+*.env
+
+# メディアファイル
+*.mp4
+*.mp3
+*.wav
+*.jpg
+*.jpeg
+*.png
