@@ -1,22 +1,20 @@
-from openai import OpenAI
+import ollama
 import os
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
-)
+# 要約に使うローカルLLM（`ollama list` で確認できる）
+MODEL = "llama3.1:8b"
 
-def summarize_lecture():
+
+def summarize_lecture(output_dir):
 
     print("transcript.txt 読み込み")
 
-    with open("outputs/transcript.txt", "r", encoding="utf-8") as f:
+    with open(os.path.join(output_dir, "transcript.txt"), "r", encoding="utf-8") as f:
         transcript = f.read()
 
-    print("GPT要約開始")
+    print("要約開始")
 
-    response = client.responses.create(
-        model="gpt-4.1-mini",
-        input=f"""
+    prompt = f"""
 以下は大学講義の文字起こしです。
 
 重要ポイントを整理し、
@@ -32,11 +30,17 @@ def summarize_lecture():
 
 {transcript}
 """
+
+    response = ollama.chat(
+        model=MODEL,
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
     )
 
-    summary = response.output_text
+    summary = response["message"]["content"]
 
-    with open("outputs/summary.txt", "w", encoding="utf-8") as f:
+    with open(os.path.join(output_dir, "summary.txt"), "w", encoding="utf-8") as f:
         f.write(summary)
 
     print("summary.txt 保存完了")

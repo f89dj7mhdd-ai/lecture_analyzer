@@ -195,11 +195,14 @@ def create_pdf_from_text(
 
 
 # main.py互換
-def make_pdf():
+def make_pdf(output_dir):
 
-    create_pdf_from_text()
+    create_pdf_from_text(
+        input_txt=os.path.join(output_dir, "final_note.txt"),
+        output_tex=os.path.join(output_dir, "note.tex")
+    )
 
 
 if __name__ == "__main__":
 
-    make_pdf()
+    make_pdf("outputs")

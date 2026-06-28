@@ -1,14 +1,17 @@
-def merge_notes():
+import os
+
+
+def merge_notes(output_dir):
 
     with open(
-        "outputs/summary.txt",
+        os.path.join(output_dir, "summary.txt"),
         "r",
         encoding="utf-8"
     ) as f:
         summary = f.read()
 
     with open(
-        "outputs/vision_summary.txt",
+        os.path.join(output_dir, "vision_summary.txt"),
         "r",
         encoding="utf-8"
     ) as f:
@@ -27,7 +30,7 @@ def merge_notes():
 """
 
     with open(
-        "outputs/final_note.txt",
+        os.path.join(output_dir, "final_note.txt"),
         "w",
         encoding="utf-8"
     ) as f:

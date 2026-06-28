@@ -1,4 +1,6 @@
 import os
+import glob
+import sys
 
 from audio import extract_audio
 from splitter import split_audio
@@ -21,8 +23,45 @@ os.makedirs("temp/frames", exist_ok=True)
 os.makedirs("temp/important_frames", exist_ok=True)
 
 
-# 動画パス
-video_path ="videos/探索的データ解析.mp4"
+# =========================
+# 動画を選ぶ
+# =========================
+
+def select_video():
+
+    # 引数で渡されたらそれを使う（例: python main.py videos/講義.mp4）
+    if len(sys.argv) > 1:
+        return sys.argv[1]
+
+    # 引数がなければ videos/ の一覧から番号で選ぶ
+    videos = sorted(glob.glob("videos/*.mp4"))
+
+    if not videos:
+        print("videos/ に .mp4 がありません")
+        sys.exit(1)
+
+    print("解析する動画を選んでください：")
+    for i, v in enumerate(videos):
+        print(f"  {i + 1}: {os.path.basename(v)}")
+
+    while True:
+        try:
+            choice = int(input("番号を入力: "))
+            if 1 <= choice <= len(videos):
+                return videos[choice - 1]
+        except ValueError:
+            pass
+        print("正しい番号を入力してください")
+
+
+video_path = select_video()
+
+
+# 出力先を動画名ごとに分ける（例: outputs/探索的データ解析/）
+video_name = os.path.splitext(os.path.basename(video_path))[0]
+output_dir = os.path.join("outputs", video_name)
+os.makedirs(output_dir, exist_ok=True)
+print(f"出力先: {output_dir}")
 
 
 
@@ -40,11 +79,11 @@ split_audio("temp/lecture_audio.mp3")
 
 print("===== Whisper文字起こし開始 =====")
 
-transcribe_all()
+transcribe_all(output_dir)
 
-print("===== GPT要約開始 =====")
+print("===== 要約開始 =====")
 
-summarize_lecture()
+summarize_lecture(output_dir)
 
 
 # =========================
@@ -61,7 +100,7 @@ detect_changes()
 
 print("===== Vision解析開始 =====")
 
-analyze_frames()
+analyze_frames(output_dir)
 
 
 # =========================
@@ -70,7 +109,7 @@ analyze_frames()
 
 print("===== ノート統合開始 =====")
 
-merge_notes()
+merge_notes(output_dir)
 
 
 # =========================
@@ -79,6 +118,6 @@ merge_notes()
 
 print("===== PDF生成開始 =====")
 
-make_pdf()
+make_pdf(output_dir)
 
 print("===== 全処理完了 =====")
