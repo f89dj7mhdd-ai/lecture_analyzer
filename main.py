@@ -1,6 +1,7 @@
 import os
 import glob
 import sys
+import shutil
 
 from audio import extract_audio
 from splitter import split_audio
@@ -17,10 +18,13 @@ from pdf_module import make_pdf
 
 
 # フォルダ作成
-os.makedirs("temp", exist_ok=True)
-os.makedirs("outputs", exist_ok=True)
+# temp は実行のたびに作り直す（前回の動画のフレーム・音声が残らないように）
+if os.path.exists("temp"):
+    shutil.rmtree("temp")
+
 os.makedirs("temp/frames", exist_ok=True)
 os.makedirs("temp/important_frames", exist_ok=True)
+os.makedirs("outputs", exist_ok=True)
 
 
 # =========================
